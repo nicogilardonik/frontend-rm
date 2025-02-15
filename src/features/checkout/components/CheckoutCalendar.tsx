@@ -17,6 +17,7 @@ function CheckoutCalendar({
   }>({});
   const [isOpen, setIsOpen] = useState(false);
   const calendarRef = useRef<HTMLDivElement>(null);
+  const [errorMessage, setErrorMessage] = useState("");
 
   // Emitir cambios al componente padre
   useEffect(() => {
@@ -36,7 +37,38 @@ function CheckoutCalendar({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Formatear fechas seleccionadas para mostrar en el botón
+  const isRangeValid = (from?: Date, to?: Date) => {
+    if (!from || !to) return true;
+
+    const timeDiff = to.getTime() - from.getTime();
+    const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)) + 1;
+    const dateArray: Date[] = [];
+
+    for (let i = 0; i < daysDiff; i++) {
+      const newDate = new Date(from);
+      newDate.setDate(from.getDate() + i);
+      dateArray.push(newDate);
+    }
+
+    return !dateArray.some((date) =>
+      disabledDates.some(
+        (disabledDate) => date.toDateString() === disabledDate.toDateString()
+      )
+    );
+  };
+
+  const handleSelect = (range: { from?: Date; to?: Date }) => {
+    if (isRangeValid(range.from, range.to)) {
+      setSelectedRange(range);
+      onDateChange(range);
+      setErrorMessage("");
+    } else {
+      setErrorMessage(
+        "⚠️ No puedes seleccionar fechas que ya están reservadas."
+      );
+    }
+  };
+
   const formatDate = (date?: Date) => {
     if (!date) return "";
     const options: Intl.DateTimeFormatOptions = {
@@ -48,8 +80,7 @@ function CheckoutCalendar({
   };
 
   return (
-    <div className="relative w-full flex justify-center">
-      {/* Botón que abre el calendario */}
+    <div className="relative w-full flex flex-col items-center">
       <button
         className="w-1/2 p-3  border border-gray-300 rounded-lg shadow-md text-left"
         onClick={() => setIsOpen(!isOpen)}
@@ -70,11 +101,11 @@ function CheckoutCalendar({
           <DayPicker
             mode="range"
             selected={selectedRange}
-            onSelect={setSelectedRange}
+            onSelect={handleSelect}
             className="w-full"
             timeZone="America/Montevideo"
             captionLayout="dropdown"
-            disabled={disabledDates}
+            disabled={[...disabledDates, { before: new Date() }]}
             modifiersClassNames={{
               range_start: "range-start",
               range_end: "range-end",
@@ -83,6 +114,9 @@ function CheckoutCalendar({
             }}
           />
         </div>
+      )}
+      {errorMessage && (
+        <p className="text-red-500 text-sm mt-2">{errorMessage}</p>
       )}
     </div>
   );

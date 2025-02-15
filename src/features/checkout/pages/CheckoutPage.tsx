@@ -4,6 +4,7 @@ import CheckoutCalendar from "../components/CheckoutCalendar";
 import CheckoutDetails from "../components/CheckoutDetails";
 import CheckoutForm from "../components/CheckoutForm";
 import { getProduct } from "../services/checkoutService";
+import { Product } from "../interfaces/Product";
 
 function CheckoutPage() {
   const disabledDates = [
@@ -17,7 +18,8 @@ function CheckoutPage() {
     from?: Date;
     to?: Date;
   }>({});
-  const [product, setProduct] = useState<any>(null);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,6 +28,8 @@ function CheckoutPage() {
         setProduct(data);
       } catch (error) {
         console.error("Error cargando datos del checkout", error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
@@ -44,13 +48,29 @@ function CheckoutPage() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center p-4">
       <div className="w-full max-w-2xl space-y-6">
-        <CheckoutCalendar
-          disabledDates={disabledDates}
-          onDateChange={handleDateChange}
-        />
-        <CheckoutForm onEmailChange={handleEmailChange} />
-        <CheckoutDetails />
-        <CheckoutButtonZone />
+        {loading ? (
+          <div className="text-center text-gray-600 text-lg font-semibold">
+            ⏳ Cargando producto...
+          </div>
+        ) : product ? (
+          <>
+            <CheckoutCalendar
+              disabledDates={disabledDates}
+              onDateChange={handleDateChange}
+            />
+            <CheckoutForm onEmailChange={handleEmailChange} />
+            <CheckoutDetails
+              pricePerDay={product.price}
+              selectedDates={selectedDates}
+            />
+            <CheckoutButtonZone />
+          </>
+        ) : (
+          <div className="text-center text-red-500 text-lg font-semibold">
+            No se pudo cargar el producto o el producto no existe. Contacte con
+            soporte.
+          </div>
+        )}
       </div>
     </div>
   );
