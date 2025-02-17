@@ -4,6 +4,8 @@ import CheckoutButtonZone from "../components/CheckoutButton";
 import CheckoutCalendar from "../components/CheckoutCalendar";
 import CheckoutDetails from "../components/CheckoutDetails";
 import CheckoutForm from "../components/CheckoutForm";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 import { getProduct } from "../services/checkoutService";
 import { Product } from "../interfaces/Product";
 
@@ -21,12 +23,13 @@ function CheckoutPage() {
   }>({});
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [searchParams] = useSearchParams();
   const productId = searchParams.get("productId");
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!productId || isNaN(Number(productId))) {
+    if (!productId) {
       navigate("/");
       return;
     }
@@ -37,6 +40,7 @@ function CheckoutPage() {
         setProduct(data);
       } catch (error) {
         console.error("Error obteniendo el producto:", error);
+        setError("❌ No se pudo cargar el producto. Intenta más tarde.");
       } finally {
         setLoading(false);
       }
@@ -45,72 +49,58 @@ function CheckoutPage() {
     fetchData();
   }, [productId, navigate]);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const data = await getProduct("123");
-  //       setProduct(data);
-  //     } catch (error) {
-  //       console.error("Error cargando datos del checkout", error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchData();
-  // }, []);
-
   const handleDateChange = (range: { from?: Date; to?: Date }) => {
-    console.log("Fechas seleccionadas en el padre:", range);
     setSelectedDates(range);
   };
 
   const handleEmailChange = (newEmail: string) => {
-    console.log("📧 Email ingresado:", newEmail);
     setEmail(newEmail);
   };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center p-4">
-      <div className="w-full max-w-2xl space-y-6">
-        {loading ? (
-          <div className="flex flex-col items-center text-gray-600 text-lg font-semibold">
-            <svg
-              className="animate-spin h-6 w-6 text-gray-500"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-              ></circle>
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V4a8 8 0 100 16v-2a8 8 0 01-8-8z"
-              ></path>
-            </svg>
-            <p>⏳ Cargando producto...</p>
-          </div>
-        ) : product ? (
+      <div className="w-full max-w-2xl">
+        {loading && (
+          <Backdrop
+            sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            open={true}
+          >
+            <div className="flex flex-col items-center">
+              <CircularProgress color="inherit" />
+              <p className="mt-4 text-lg font-semibold">
+                ⏳ Cargando producto...
+              </p>
+            </div>
+          </Backdrop>
+        )}
+        {!loading && product ? (
           <>
-            <CheckoutCalendar
-              disabledDates={disabledDates}
-              onDateChange={handleDateChange}
-            />
-            <CheckoutForm onEmailChange={handleEmailChange} />
-            <CheckoutDetails
-              pricePerDay={product.price}
-              selectedDates={selectedDates}
-            />
-            <CheckoutButtonZone />
+            <div className=" bg-white p-4 rounded-lg shadow-md">
+              <CheckoutCalendar
+                disabledDates={disabledDates}
+                onDateChange={handleDateChange}
+              />
+            </div>
+            <div className="bg-white p-4 rounded-lg shadow-md">
+              <CheckoutForm onEmailChange={handleEmailChange} />
+            </div>
+            <div className="bg-white p-4 rounded-lg shadow-md">
+              <CheckoutDetails
+                pricePerDay={product.price}
+                selectedDates={selectedDates}
+              />
+            </div>
+            <div className="bg-white p-4 rounded-lg shadow-md">
+              {" "}
+              <CheckoutButtonZone />
+            </div>
           </>
-        ) : (
+        ) : null}
+
+        {!loading && !product && (
           <div className="text-center text-red-500 text-lg font-semibold">
-            No se pudo cargar el producto o el producto no existe. Contacte con
-            soporte.
+            {error ||
+              "No se pudo cargar el producto o el producto no existe. Contacte con soporte."}
           </div>
         )}
       </div>
