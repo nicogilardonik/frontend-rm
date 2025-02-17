@@ -1,15 +1,23 @@
+import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
+
 interface CheckoutButtonZoneProps {
   pricePerDay: number;
   selectedDates: { from?: Date; to?: Date };
   discountAmount?: number;
+  loading: boolean;
+  onReserveClick: () => void;
 }
 
 function CheckoutButtonZone({
   pricePerDay,
   selectedDates,
   discountAmount,
+  loading,
+  onReserveClick,
 }: CheckoutButtonZoneProps) {
-  const insurancePrice = import.meta.env.VITE_INSURANCE;
+  const insurancePrice = Number(import.meta.env.VITE_INSURANCE) || 180;
+
   const calculateDays = () => {
     if (selectedDates.from && selectedDates.to) {
       const timeDiff =
@@ -24,11 +32,11 @@ function CheckoutButtonZone({
   const totalPrice =
     pricePerDay * numberOfDays -
     (discountAmount ? discountAmount * numberOfDays : 0) +
-    Number(insurancePrice);
+    insurancePrice;
 
   return (
-    <div className="p-2 bg-white flex flex-col items-center space-y-4">
-      <div className="mt-4 w-full pt-4">
+    <div className="p-4 bg-white flex flex-col items-center space-y-4 shadow-md rounded-lg w-full">
+      <div className="w-full border-t pt-4">
         <div className="flex justify-between w-full">
           <span className="text-gray-700 font-semibold">
             Total por {numberOfDays} día(s)
@@ -39,9 +47,29 @@ function CheckoutButtonZone({
           Serás redirigido a MercadoPago
         </p>
       </div>
-      <button className="bg-purple-600 text-white px-6 py-3 rounded-lg w-full max-w-md shadow-md hover:bg-purple-700 transition">
-        Reservar
-      </button>
+
+      <Button
+        onClick={onReserveClick}
+        disabled={loading}
+        variant="contained"
+        sx={{
+          backgroundColor: "#5B27EC",
+          "&:hover": { backgroundColor: "#622AFF" },
+          color: "white",
+          padding: "12px 24px",
+          borderRadius: "25px",
+          fontWeight: "bold",
+          textTransform: "none",
+          width: "100%",
+          maxWidth: "320px",
+          boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+        }}
+        startIcon={
+          loading ? <CircularProgress size={20} color="inherit" /> : null
+        }
+      >
+        {loading ? "Procesando..." : "Reservar"}
+      </Button>
     </div>
   );
 }

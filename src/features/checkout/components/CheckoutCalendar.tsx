@@ -90,7 +90,7 @@ function CheckoutCalendar({
           ? `Desde ${formatDate(selectedRange.from)} al ${formatDate(
               selectedRange.to
             )}`
-          : "Selecciona una fecha"}
+          : "Seleccione fecha"}
       </button>
 
       {isOpen && (

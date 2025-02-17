@@ -23,7 +23,8 @@ function CheckoutPage() {
     to?: Date;
   }>({});
   const [product, setProduct] = useState<Product | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loadingProduct, setloadingProduct] = useState(true);
+  const [loadingReservation, setLoadingReservation] = useState(false);
   const [error, setError] = useState("");
   const [searchParams] = useSearchParams();
   const productId = searchParams.get("productId");
@@ -43,7 +44,7 @@ function CheckoutPage() {
         console.error("Error obteniendo el producto:", error);
         setError("❌ No se pudo cargar el producto. Intenta más tarde.");
       } finally {
-        setLoading(false);
+        setloadingProduct(false);
       }
     };
 
@@ -58,10 +59,23 @@ function CheckoutPage() {
     setEmail(newEmail);
   };
 
+  const handleReserveClick = async () => {
+    setLoadingReservation(true);
+    try {
+      // Simulación de la llamada a la API
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      alert("Reserva confirmada 🎉");
+    } catch (error) {
+      console.error("Error al reservar:", error);
+    } finally {
+      setLoadingReservation(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center p-4">
       <div className="w-full max-w-2xl shadow-xl rounded-xl">
-        {loading && (
+        {loadingProduct && (
           <Backdrop
             sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
             open={true}
@@ -74,7 +88,7 @@ function CheckoutPage() {
             </div>
           </Backdrop>
         )}
-        {!loading && product ? (
+        {!loadingProduct && product ? (
           <>
             <div className=" bg-white p-4">
               <CheckoutCalendar
@@ -100,12 +114,14 @@ function CheckoutPage() {
                 pricePerDay={product.price}
                 selectedDates={selectedDates}
                 discountAmount={product.discountAmount}
+                loading={loadingReservation}
+                onReserveClick={handleReserveClick}
               />
             </div>
           </>
         ) : null}
 
-        {!loading && !product && (
+        {!loadingProduct && !product && (
           <div className="text-center text-red-500 text-lg font-semibold">
             {error ||
               "No se pudo cargar el producto o el producto no existe. Contacte con soporte."}

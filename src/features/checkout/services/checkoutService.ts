@@ -10,9 +10,6 @@ const api = axios.create({
 
 export const getProduct = async (productId: string): Promise<Product> => {
   try {
-    console.log("URL BASE", import.meta.env.VITE_API_BASE_URL);
-
-    //const response = await api.get(`/${checkoutId}`);
     const response = await api.get(`search-properties?propertyId=${productId}`);
     return response.data;
   } catch (error) {
@@ -27,9 +24,9 @@ export const _getProduct = async (checkoutId: string): Promise<Product> => {
 
     return new Promise((resolve) => {
       setTimeout(() => {
-        console.log("✔ Producto cargado exitosamente");
-        resolve(product); // Devuelve el producto mockeado
-      }, 1000); // Simula 1 segundo de delay
+        console.log("Producto cargado exitosamente");
+        resolve(product);
+      }, 1000);
     });
   } catch (error) {
     console.error(`Error obteniendo el producto ${checkoutId}:`, error);
