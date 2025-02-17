@@ -8,20 +8,20 @@ const api = axios.create({
   },
 });
 
-// export const getProduct = async (checkoutId: string): Promise<Product> => {
-//   try {
-//     console.log("URL BASE", import.meta.env.VITE_API_BASE_URL);
+export const getProduct = async (productId: string): Promise<Product> => {
+  try {
+    console.log("URL BASE", import.meta.env.VITE_API_BASE_URL);
 
-//     //const response = await api.get(`/${checkoutId}`);
-//     const response = await api.get("search-properties");
-//     return response.data[1];
-//   } catch (error) {
-//     console.error(`Error obteniendo el producto ${checkoutId}:`, error);
-//     throw error;
-//   }
-// };
+    //const response = await api.get(`/${checkoutId}`);
+    const response = await api.get(`search-properties?propertyId=${productId}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error obteniendo el producto ${productId}:`, error);
+    throw error;
+  }
+};
 
-export const getProduct = async (checkoutId: string): Promise<Product> => {
+export const _getProduct = async (checkoutId: string): Promise<Product> => {
   try {
     console.log("📡 Simulando llamada a la API...");
 
@@ -99,4 +99,5 @@ const product = {
   ],
   handle: "alquiler-de-trozador-de-lea-o-madera",
   isAvailableBetweenDates: true,
+  discountAmount: 25,
 };

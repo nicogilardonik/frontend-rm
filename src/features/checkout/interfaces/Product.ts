@@ -29,6 +29,7 @@ export interface Product {
   categories: Category[];
   handle: string;
   isAvailableBetweenDates: boolean;
+  discountAmount: number;
 }
 
 export interface Timestamp {

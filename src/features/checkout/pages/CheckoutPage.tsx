@@ -6,6 +6,7 @@ import CheckoutDetails from "../components/CheckoutDetails";
 import CheckoutForm from "../components/CheckoutForm";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
+import Divider from "@mui/material/Divider";
 import { getProduct } from "../services/checkoutService";
 import { Product } from "../interfaces/Product";
 
@@ -59,7 +60,7 @@ function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center p-4">
-      <div className="w-full max-w-2xl">
+      <div className="w-full max-w-2xl shadow-xl rounded-xl">
         {loading && (
           <Backdrop
             sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
@@ -75,24 +76,31 @@ function CheckoutPage() {
         )}
         {!loading && product ? (
           <>
-            <div className=" bg-white p-4 rounded-lg shadow-md">
+            <div className=" bg-white p-4">
               <CheckoutCalendar
                 disabledDates={disabledDates}
                 onDateChange={handleDateChange}
               />
             </div>
-            <div className="bg-white p-4 rounded-lg shadow-md">
+            <Divider variant="middle" />
+            <div className="bg-white p-4">
               <CheckoutForm onEmailChange={handleEmailChange} />
             </div>
-            <div className="bg-white p-4 rounded-lg shadow-md">
+            <Divider variant="middle" />
+            <div className="bg-white p-4">
               <CheckoutDetails
                 pricePerDay={product.price}
-                selectedDates={selectedDates}
+                discountAmount={product.discountAmount}
               />
             </div>
-            <div className="bg-white p-4 rounded-lg shadow-md">
+            <Divider variant="middle" />
+            <div className="bg-white p-4 ">
               {" "}
-              <CheckoutButtonZone />
+              <CheckoutButtonZone
+                pricePerDay={product.price}
+                selectedDates={selectedDates}
+                discountAmount={product.discountAmount}
+              />
             </div>
           </>
         ) : null}
