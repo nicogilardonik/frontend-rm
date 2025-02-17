@@ -54,13 +54,13 @@
 .rdp-nav button {
   background: transparent;
   border: none;
-  color: #4f46e5;
+  color: #5B27EC;
   font-size: 1.5rem;
   cursor: pointer;
 }
 
 .rdp-nav button:hover {
-  color: #4338ca;
+  color: #5B27EC;
 }
 
 
