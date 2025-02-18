@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { Product } from "../interfaces/Product";
 
 interface ProductItemProps {
@@ -6,34 +5,35 @@ interface ProductItemProps {
 }
 
 function ProductItem({ product }: ProductItemProps) {
-  const navigate = useNavigate();
-
   return (
-    <div className="bg-gray-50 shadow-lg rounded-lg p-2 flex items-center space-x-4">
+    <div className="bg-white shadow-lg rounded-xl p-4 flex flex-col sm:flex-row items-center gap-4 transition-transform transform hover:scale-105 hover:shadow-xl">
+      {/* Imagen del producto */}
       <img
         src={product.mainImage}
         alt={product.propertyName}
-        className="w-24 h-24 rounded-md object-cover"
+        className="w-full sm:w-24 h-24 rounded-lg object-cover border border-gray-200"
       />
 
-      <div className="flex-1">
-        <h3 className="text-lg font-semibold">{product.propertyName}</h3>
-        <p className="text-gray-600">
-          Precio por día: <span className="font-bold">UYU {product.price}</span>
+      {/* Contenedor del texto */}
+      <div className="flex-1 w-full text-center sm:text-left">
+        <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">
+          {product.propertyName}
+        </h3>
+        <p className="text-gray-600 text-sm">
+          Precio por día:{" "}
+          <span className="font-bold text-gray-800">UYU {product.price}</span>
         </p>
       </div>
 
-      {/* <button
-        className="bg-purple-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-purple-700 transition"
-        onClick={() => navigate(`/checkout?productId=${product.shopifyId}`)}
-      >
-        Reservar
-      </button> */}
-      <div
-        dangerouslySetInnerHTML={{
-          __html: `<book-button productId="${product.id}"></book-button>`,
-        }}
-      />
+      {/* Contenedor del botón */}
+      <div className="flex-shrink-0 w-full sm:w-auto flex justify-center sm:justify-end">
+        <div
+          dangerouslySetInnerHTML={{
+            __html: `<book-button productId="${product.shopifyId}"></book-button>`,
+          }}
+          className="w-full sm:w-32 h-12 flex items-center justify-center"
+        />
+      </div>
     </div>
   );
 }
