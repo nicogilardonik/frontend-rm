@@ -1,4 +1,5 @@
 export interface Product {
+  id: string;
   ratingSummary: number;
   shopifyId: string;
   notes: string;

@@ -83,6 +83,7 @@ const products: Product[] = [
     handle: "alquiler-de-trozador-de-lea-o-madera",
     id: "2EI9MBmX6abmNUGQHq92",
     isAvailableBetweenDates: true,
+    discountAmount: 0,
   },
   {
     ratingSummary: 0,

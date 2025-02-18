@@ -30,7 +30,12 @@ function CheckoutPage() {
   const [productError, setProductError] = useState("");
 
   useEffect(() => {
-    if (!productId) {
+    if (
+      !productId ||
+      !productId.trim() ||
+      productId === "undefined" ||
+      productId === "null"
+    ) {
       navigate("/");
       return;
     }
