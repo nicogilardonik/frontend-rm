@@ -23,7 +23,7 @@ function CheckoutForm({ onEmailChange }: CheckoutFormProps) {
   };
 
   return (
-    <div className="p-4 bg-white shadow-md rounded-lg">
+    <div className="p-4 bg-white">
       <h2 className="text-lg font-semibold text-gray-900">Tus datos</h2>
 
       <div className="mt-3">

@@ -29,7 +29,7 @@ function ProductItem({ product }: ProductItemProps) {
       <div className="flex-shrink-0 w-full sm:w-auto flex justify-center sm:justify-end">
         <div
           dangerouslySetInnerHTML={{
-            __html: `<book-button productId="${product.shopifyId}"></book-button>`,
+            __html: `<book-button productId="${product.id}"></book-button>`,
           }}
           className="w-full sm:w-32 h-12 flex items-center justify-center"
         />

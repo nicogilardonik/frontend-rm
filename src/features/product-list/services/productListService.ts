@@ -1,5 +1,6 @@
 import axios from "axios";
-import { Product } from "../../checkout/interfaces/Product";
+import { Product } from "../../../shared/interfaces/Product";
+import { ProductsResponse } from "../../../core/interfaces/Response";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -8,24 +9,38 @@ const api = axios.create({
   },
 });
 
-export const _getProducts = async (): Promise<Product[]> => {
-  const response = await api.get(`search-properties`);
-  return response.data;
+export const _getProducts = async (): Promise<ProductsResponse> => {
+  try {
+    const response = await api.get(`search-properties`);
+    return {
+      success: true,
+      data: response.data,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: "❌ No se pudieron cargar los productos.",
+    };
+  }
 };
 
-export const getProducts = async (): Promise<Product[]> => {
+export const getProducts = async (): Promise<ProductsResponse> => {
   try {
     console.log("📡 Simulando llamada a la API...");
 
     return new Promise((resolve) => {
       setTimeout(() => {
-        console.log("Producto cargado exitosamente");
-        resolve(products);
+        resolve({
+          success: true,
+          data: products,
+        });
       }, 1000);
     });
   } catch (error) {
-    console.error(`Error obteniendo el producto:`, error);
-    throw error;
+    return {
+      success: false,
+      error: "❌ No se pudieron cargar los productos.",
+    };
   }
 };
 

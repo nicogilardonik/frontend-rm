@@ -1,4 +1,4 @@
-import { Suspense, lazy } from "react";
+import { lazy } from "react";
 import { Routes, Route } from "react-router-dom";
 
 const NotFound = lazy(() => import("./core/pages/NotFound"));
@@ -12,15 +12,11 @@ const ProductListPage = lazy(
 function App() {
   return (
     <div className="w-full h-screen flex flex-col">
-      <Suspense
-        fallback={<div className="text-center mt-10">⏳ Cargando...</div>}
-      >
-        <Routes>
-          <Route path="/checkout" element={<CheckoutPage />} />
-          <Route path="/" element={<ProductListPage />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Suspense>
+      <Routes>
+        <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/" element={<ProductListPage />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
     </div>
   );
 }

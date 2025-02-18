@@ -8,7 +8,7 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import Divider from "@mui/material/Divider";
 import { getProduct } from "../services/checkoutService";
-import { Product } from "../interfaces/Product";
+import { Product } from "../../../shared/interfaces/Product";
 import { Reservation } from "../interfaces/Reservation";
 
 function CheckoutPage() {
@@ -41,14 +41,16 @@ function CheckoutPage() {
     }
 
     const fetchData = async () => {
-      try {
-        const data = await getProduct(productId);
+      const { success, data, error } = await getProduct(productId);
+      if (success && data) {
         setProduct(data);
-      } catch (error) {
-        console.error("Error obteniendo el producto:", error);
-        setProductError("No se pudo cargar el producto. Intenta más tarde.");
-      } finally {
         setLoadingProduct(false);
+      } else if (error) {
+        setProductError(error);
+        setLoadingProduct(false);
+        setTimeout(() => {
+          navigate("/");
+        }, 3500);
       }
     };
 
@@ -57,10 +59,7 @@ function CheckoutPage() {
 
   const handleDateChange = (range: { from?: Date; to?: Date }) => {
     setSelectedDates(range);
-
-    if (range.from && range.to) {
-      setDateError("");
-    }
+    if (range.from && range.to) setDateError("");
   };
 
   const handleEmailChange = (newEmail: string) => {
@@ -72,12 +71,12 @@ function CheckoutPage() {
     let hasError = false;
 
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setEmailError("Ingresa un email válido.");
+      setEmailError("❌ Ingresa un email válido.");
       hasError = true;
     }
 
     if (!selectedDates.from || !selectedDates.to) {
-      setDateError("Selecciona un rango de fechas válido.");
+      setDateError("❌ Selecciona un rango de fechas válido.");
       hasError = true;
     }
 
@@ -106,68 +105,80 @@ function CheckoutPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center p-4">
-      <div className="w-full max-w-2xl shadow-xl rounded-xl">
-        {loadingProduct && (
-          <Backdrop
-            sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-            open={true}
-          >
-            <div className="flex flex-col items-center">
-              <CircularProgress color="inherit" />
-              <p className="mt-4 text-lg font-semibold">
-                ⏳ Cargando producto...
-              </p>
-            </div>
-          </Backdrop>
-        )}
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
+      {/* Loading Backdrop */}
+      {loadingProduct && (
+        <Backdrop
+          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={true}
+        >
+          <div className="flex flex-col items-center">
+            <CircularProgress color="inherit" />
+            <p className="mt-4 text-lg font-semibold">
+              ⏳ Cargando producto...
+            </p>
+          </div>
+        </Backdrop>
+      )}
 
-        {!loadingProduct && product ? (
-          <>
-            <div className="bg-white p-4">
-              <CheckoutCalendar
-                disabledDates={[]}
-                onDateChange={handleDateChange}
-              />
-              {dateError && (
-                <p className="text-red-500 text-sm font-semibold mt-2">
-                  {dateError}
-                </p>
-              )}
-            </div>
-            <Divider variant="middle" />
-            <div className="bg-white p-4">
-              <CheckoutForm onEmailChange={handleEmailChange} />
-              {emailError && (
-                <p className="text-red-500 text-sm font-semibold mt-2">
-                  {emailError}
-                </p>
-              )}
-            </div>
-            <Divider variant="middle" />
-            <div className="bg-white p-4">
-              <CheckoutDetails
-                pricePerDay={product.price}
-                discountAmount={product.discountAmount}
-              />
-            </div>
-            <Divider variant="middle" />
-            <div className="bg-white p-4 flex flex-col items-center">
-              <CheckoutButtonZone
-                pricePerDay={product.price}
-                selectedDates={selectedDates}
-                discountAmount={product.discountAmount}
-                loading={loadingReservation}
-                onReserveClick={handleReserveClick}
-              />
-            </div>
-          </>
-        ) : (
+      {/* Si el producto se carga correctamente */}
+      {!loadingProduct && product && (
+        <div className="w-full max-w-xl shadow-xl rounded-xl bg-white overflow-hidden">
+          {/* 📆 Calendario */}
+          <div className="p-4">
+            <CheckoutCalendar
+              disabledDates={[]}
+              onDateChange={handleDateChange}
+            />
+            {dateError && (
+              <p className="text-red-500 text-sm font-semibold mt-2">
+                {dateError}
+              </p>
+            )}
+          </div>
+          <Divider variant="middle" />
+
+          {/* 📧 Formulario de Email */}
+          <div className="p-4">
+            <CheckoutForm onEmailChange={handleEmailChange} />
+            {emailError && (
+              <p className="text-red-500 text-sm font-semibold mt-2">
+                {emailError}
+              </p>
+            )}
+          </div>
+          <Divider variant="middle" />
+
+          {/* 🏷️ Detalles del Pago */}
+          <div className="p-4">
+            <CheckoutDetails
+              pricePerDay={product.price}
+              discountAmount={product.discountAmount}
+            />
+          </div>
+          <Divider variant="middle" />
+
+          {/* ✅ Botón de Reserva */}
+          <div className="p-4 flex flex-col items-center">
+            <CheckoutButtonZone
+              pricePerDay={product.price}
+              selectedDates={selectedDates}
+              discountAmount={product.discountAmount}
+              loading={loadingReservation}
+              onReserveClick={handleReserveClick}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Si hay un error al cargar el producto */}
+      {!loadingProduct && productError && (
+        <div className="w-full max-w-xl shadow-xl rounded-xl bg-white overflow-hidden">
           <div className="text-center text-red-500 text-lg font-semibold p-6">
             {productError}
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
