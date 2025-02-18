@@ -1,17 +1,26 @@
+import { Suspense, lazy } from "react";
 import { Routes, Route } from "react-router-dom";
-import NotFound from "./core/pages/NotFound";
-import CheckoutPage from "./features/checkout/pages/CheckoutPage";
-import ProductListPage from "./features/product-list/pages/ProductListPage";
+
+const NotFound = lazy(() => import("./core/pages/NotFound"));
+const CheckoutPage = lazy(
+  () => import("./features/checkout/pages/CheckoutPage")
+);
+const ProductListPage = lazy(
+  () => import("./features/product-list/pages/ProductListPage")
+);
 
 function App() {
   return (
-    <div className="w-full min-h-screen flex flex-col">
-      {/* //TODO: ver lazy loading */}
-      <Routes>
-        <Route path="/checkout" element={<CheckoutPage />} />
-        <Route path="/" element={<ProductListPage />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+    <div className="w-full h-screen flex flex-col">
+      <Suspense
+        fallback={<div className="text-center mt-10">⏳ Cargando...</div>}
+      >
+        <Routes>
+          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/" element={<ProductListPage />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Suspense>
     </div>
   );
 }
