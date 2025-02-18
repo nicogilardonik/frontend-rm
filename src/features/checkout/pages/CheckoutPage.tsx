@@ -9,13 +9,12 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Divider from "@mui/material/Divider";
 import { getProduct } from "../services/checkoutService";
 import { Product } from "../interfaces/Product";
+import { Reservation } from "../interfaces/Reservation";
 
 function CheckoutPage() {
-  const disabledDates = [
-    new Date(2025, 1, 20),
-    new Date(2025, 1, 21),
-    new Date(2025, 1, 25),
-  ];
+  const [searchParams] = useSearchParams();
+  const productId = searchParams.get("productId");
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [selectedDates, setSelectedDates] = useState<{
@@ -23,12 +22,12 @@ function CheckoutPage() {
     to?: Date;
   }>({});
   const [product, setProduct] = useState<Product | null>(null);
-  const [loadingProduct, setloadingProduct] = useState(true);
+  const [loadingProduct, setLoadingProduct] = useState(true);
   const [loadingReservation, setLoadingReservation] = useState(false);
-  const [error, setError] = useState("");
-  const [searchParams] = useSearchParams();
-  const productId = searchParams.get("productId");
-  const navigate = useNavigate();
+
+  const [emailError, setEmailError] = useState("");
+  const [dateError, setDateError] = useState("");
+  const [productError, setProductError] = useState("");
 
   useEffect(() => {
     if (!productId) {
@@ -42,9 +41,9 @@ function CheckoutPage() {
         setProduct(data);
       } catch (error) {
         console.error("Error obteniendo el producto:", error);
-        setError("❌ No se pudo cargar el producto. Intenta más tarde.");
+        setProductError("No se pudo cargar el producto. Intenta más tarde.");
       } finally {
-        setloadingProduct(false);
+        setLoadingProduct(false);
       }
     };
 
@@ -53,20 +52,49 @@ function CheckoutPage() {
 
   const handleDateChange = (range: { from?: Date; to?: Date }) => {
     setSelectedDates(range);
+
+    if (range.from && range.to) {
+      setDateError("");
+    }
   };
 
   const handleEmailChange = (newEmail: string) => {
     setEmail(newEmail);
+    setEmailError("");
   };
 
-  const handleReserveClick = async () => {
+  const handleReserveClick = async (totalPrice: number) => {
+    let hasError = false;
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setEmailError("Ingresa un email válido.");
+      hasError = true;
+    }
+
+    if (!selectedDates.from || !selectedDates.to) {
+      setDateError("Selecciona un rango de fechas válido.");
+      hasError = true;
+    }
+
+    if (hasError) return;
+
     setLoadingReservation(true);
+
+    const reservationData: Reservation = {
+      productId: productId!,
+      from: selectedDates.from.toISOString(),
+      to: selectedDates.to.toISOString(),
+      email,
+      price: totalPrice,
+    };
+
+    console.log("📦 Reserva enviada:", reservationData);
+
     try {
-      // Simulación de la llamada a la API
       await new Promise((resolve) => setTimeout(resolve, 2000));
-      alert("Reserva confirmada 🎉");
+      alert("✅ Reserva confirmada 🎉");
     } catch (error) {
-      console.error("Error al reservar:", error);
+      console.error("Error al procesar la reserva:", error);
     } finally {
       setLoadingReservation(false);
     }
@@ -88,17 +116,28 @@ function CheckoutPage() {
             </div>
           </Backdrop>
         )}
+
         {!loadingProduct && product ? (
           <>
-            <div className=" bg-white p-4">
+            <div className="bg-white p-4">
               <CheckoutCalendar
-                disabledDates={disabledDates}
+                disabledDates={[]}
                 onDateChange={handleDateChange}
               />
+              {dateError && (
+                <p className="text-red-500 text-sm font-semibold mt-2">
+                  {dateError}
+                </p>
+              )}
             </div>
             <Divider variant="middle" />
             <div className="bg-white p-4">
               <CheckoutForm onEmailChange={handleEmailChange} />
+              {emailError && (
+                <p className="text-red-500 text-sm font-semibold mt-2">
+                  {emailError}
+                </p>
+              )}
             </div>
             <Divider variant="middle" />
             <div className="bg-white p-4">
@@ -108,8 +147,7 @@ function CheckoutPage() {
               />
             </div>
             <Divider variant="middle" />
-            <div className="bg-white p-4 ">
-              {" "}
+            <div className="bg-white p-4 flex flex-col items-center">
               <CheckoutButtonZone
                 pricePerDay={product.price}
                 selectedDates={selectedDates}
@@ -119,12 +157,9 @@ function CheckoutPage() {
               />
             </div>
           </>
-        ) : null}
-
-        {!loadingProduct && !product && (
-          <div className="text-center text-red-500 text-lg font-semibold">
-            {error ||
-              "No se pudo cargar el producto o el producto no existe. Contacte con soporte."}
+        ) : (
+          <div className="text-center text-red-500 text-lg font-semibold p-6">
+            {productError}
           </div>
         )}
       </div>

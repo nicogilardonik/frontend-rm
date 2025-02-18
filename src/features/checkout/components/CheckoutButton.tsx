@@ -6,7 +6,7 @@ interface CheckoutButtonZoneProps {
   selectedDates: { from?: Date; to?: Date };
   discountAmount?: number;
   loading: boolean;
-  onReserveClick: () => void;
+  onReserveClick: (totalPrice: number) => void;
 }
 
 function CheckoutButtonZone({
@@ -49,7 +49,7 @@ function CheckoutButtonZone({
       </div>
 
       <Button
-        onClick={onReserveClick}
+        onClick={() => onReserveClick(totalPrice)}
         disabled={loading}
         variant="contained"
         sx={{

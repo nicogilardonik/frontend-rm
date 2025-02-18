@@ -7,38 +7,36 @@ interface CheckoutFormProps {
 
 function CheckoutForm({ onEmailChange }: CheckoutFormProps) {
   const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState(false); // 📌 Estado para manejar error
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Regex básica para validar emails
+    return emailRegex.test(email);
+  };
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newEmail = event.target.value;
     setEmail(newEmail);
     onEmailChange(newEmail);
+
+    setEmailError(!validateEmail(newEmail));
   };
 
   return (
-    <div className="p-2 bg-white">
-      <div>
-        <h2 className="text-lg font-semibold ">Tus datos</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
-          <div className="flex flex-col">
-            <TextField
-              type="email"
-              value={email}
-              onChange={handleEmailChange}
-              label="Email"
-              variant="outlined"
-            />
+    <div className="p-4 bg-white shadow-md rounded-lg">
+      <h2 className="text-lg font-semibold text-gray-900">Tus datos</h2>
 
-            {/* <label className="text-sm font-medium text-gray-600 mb-1">
-              Email *
-            </label>
-            <input
-              placeholder="Ingresa tu email"
-              value={email}
-              onChange={handleEmailChange}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600"
-            /> */}
-          </div>
-        </div>
+      <div className="mt-3">
+        <TextField
+          type="email"
+          value={email}
+          onChange={handleEmailChange}
+          label="Email"
+          variant="outlined"
+          fullWidth
+          error={emailError}
+          helperText={emailError ? "Ingresa un email válido" : ""}
+        />
       </div>
     </div>
   );
