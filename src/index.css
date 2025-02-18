@@ -19,18 +19,14 @@
 .range-start,
 .range-end {
   background-color: #CDDC39 !important;
-  /* Amarillo suave */
   color: #000 !important;
   border-radius: 2px;
-  /* Forma de círculo */
   font-weight: bold;
-  /* Agrega un borde negro delgado */
 }
 
 /* Días intermedios del rango */
 .range-middle {
   background-color: #cad190 !important;
-  /* Morado elegante */
   color: #fff !important;
 
   font-weight: bold;
@@ -39,7 +35,6 @@
 /* Días deshabilitados */
 .day-disabled {
   color: #d1d5db !important;
-  /* Gris suave */
   opacity: 0.5;
   pointer-events: none;
 }
@@ -69,10 +64,6 @@
   outline: none !important;
   box-shadow: none !important;
 }
-
-
-
-
 
 /*
 a {

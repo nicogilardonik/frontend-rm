@@ -7,10 +7,10 @@ interface CheckoutFormProps {
 
 function CheckoutForm({ onEmailChange }: CheckoutFormProps) {
   const [email, setEmail] = useState("");
-  const [emailError, setEmailError] = useState(false); // 📌 Estado para manejar error
+  const [emailError, setEmailError] = useState(false);
 
   const validateEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Regex básica para validar emails
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
@@ -36,6 +36,10 @@ function CheckoutForm({ onEmailChange }: CheckoutFormProps) {
           fullWidth
           error={emailError}
           helperText={emailError ? "Ingresa un email válido" : ""}
+          sx={{
+            borderRadius: "8px",
+            "& .MuiOutlinedInput-root": { borderRadius: "25px" },
+          }}
         />
       </div>
     </div>

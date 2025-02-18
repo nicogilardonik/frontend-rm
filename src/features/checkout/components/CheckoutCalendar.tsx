@@ -82,7 +82,7 @@ function CheckoutCalendar({
   return (
     <div className="relative w-full flex flex-col items-center">
       <button
-        className="w-1/2 p-3  border border-gray-300 rounded-lg shadow-md text-left"
+        className="w-2/3 p-3  border border-violet-600 rounded-3xl shadow-md text-left"
         onClick={() => setIsOpen(!isOpen)}
       >
         📅{" "}
@@ -102,7 +102,6 @@ function CheckoutCalendar({
             mode="range"
             selected={selectedRange}
             onSelect={handleSelect}
-            className="w-full"
             timeZone="America/Montevideo"
             captionLayout="dropdown"
             disabled={[...disabledDates, { before: new Date() }]}
