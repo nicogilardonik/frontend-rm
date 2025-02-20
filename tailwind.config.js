@@ -11,6 +11,7 @@ export default {
         secondary: "#EAB308",
         accent: "#14B8A6",
         background: "#F3F4F6",
+        hover: "#774BEE"
       },
     },
   },

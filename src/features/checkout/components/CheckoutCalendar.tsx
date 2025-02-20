@@ -41,7 +41,7 @@ function CheckoutCalendar({
     if (!from || !to) return true;
 
     const timeDiff = to.getTime() - from.getTime();
-    const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)) + 1;
+    const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
     const dateArray: Date[] = [];
 
     for (let i = 0; i < daysDiff; i++) {

@@ -12,6 +12,12 @@ import { Product } from "../../../shared/interfaces/Product";
 import { Reservation } from "../interfaces/Reservation";
 
 function CheckoutPage() {
+  const disabledDates = [
+    new Date("2025-02-27"),
+    new Date("2025-02-23"),
+    new Date("2025-02-25"),
+  ];
+
   const [searchParams] = useSearchParams();
   const productId = searchParams.get("productId");
   const navigate = useNavigate();
@@ -127,7 +133,7 @@ function CheckoutPage() {
           {/* 📆 Calendario */}
           <div className="p-4">
             <CheckoutCalendar
-              disabledDates={[]}
+              disabledDates={disabledDates}
               onDateChange={handleDateChange}
             />
             {dateError && (

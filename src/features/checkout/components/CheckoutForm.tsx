@@ -31,7 +31,7 @@ function CheckoutForm({ onEmailChange }: CheckoutFormProps) {
           type="email"
           value={email}
           onChange={handleEmailChange}
-          label="Email"
+          label="Email *"
           variant="outlined"
           fullWidth
           error={emailError}

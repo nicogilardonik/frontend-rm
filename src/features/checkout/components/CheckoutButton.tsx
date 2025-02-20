@@ -12,7 +12,7 @@ interface CheckoutButtonZoneProps {
 function CheckoutButtonZone({
   pricePerDay,
   selectedDates,
-  discountAmount,
+  discountAmount = 0,
   loading,
   onReserveClick,
 }: CheckoutButtonZoneProps) {
@@ -20,19 +20,21 @@ function CheckoutButtonZone({
 
   const calculateDays = () => {
     if (selectedDates.from && selectedDates.to) {
-      const timeDiff =
-        selectedDates.to.getTime() - selectedDates.from.getTime();
-      const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)) + 1;
-      return daysDiff;
+      const fromDate = new Date(selectedDates.from.setHours(0, 0, 0, 0));
+      const toDate = new Date(selectedDates.to.setHours(0, 0, 0, 0));
+
+      const timeDiff = toDate.getTime() - fromDate.getTime();
+      const daysDiff = Math.round(timeDiff / (1000 * 60 * 60 * 24));
+
+      return daysDiff === 0 ? 1 : daysDiff; // 📌 Si es el mismo día, cuenta como 1
     }
     return 1;
   };
 
-  const numberOfDays = calculateDays();
+  const numberOfDays = Math.max(1, calculateDays());
+  const discountTotal = discountAmount * numberOfDays; //
   const totalPrice =
-    pricePerDay * numberOfDays -
-    (discountAmount ? discountAmount * numberOfDays : 0) +
-    insurancePrice;
+    pricePerDay * numberOfDays - discountTotal + insurancePrice; //
 
   return (
     <div className="p-4 bg-white flex flex-col items-center space-y-4 w-full">

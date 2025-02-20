@@ -1,5 +1,4 @@
 import axios from "axios";
-import { Product } from "../../../shared/interfaces/Product";
 import { ProductResponse } from "../../../core/interfaces/Response";
 
 const api = axios.create({
@@ -9,7 +8,7 @@ const api = axios.create({
   },
 });
 
-export const getProduct = async (
+export const _getProduct = async (
   productId: string
 ): Promise<ProductResponse> => {
   try {
@@ -28,7 +27,7 @@ export const getProduct = async (
   }
 };
 
-export const _getProduct = async (
+export const getProduct = async (
   checkoutId: string
 ): Promise<ProductResponse> => {
   try {
