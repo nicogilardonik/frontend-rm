@@ -42,7 +42,7 @@ function CheckoutPage() {
       productId === "undefined" ||
       productId === "null"
     ) {
-      navigate("/");
+      navigate(companyId ? `/?companyId=${companyId}` : "/");
       return;
     }
 
@@ -55,7 +55,7 @@ function CheckoutPage() {
         setProductError(error);
         setLoadingProduct(false);
         setTimeout(() => {
-          navigate("/");
+          navigate(companyId ? `/?companyId=${companyId}` : "/");
         }, 3500);
       }
     };
@@ -92,8 +92,8 @@ function CheckoutPage() {
 
     const reservationData: Reservation = {
       productId: productId!,
-      from: selectedDates.from.toISOString(),
-      to: selectedDates.to.toISOString(),
+      from: selectedDates.from ? selectedDates.from.toISOString() : "",
+      to: selectedDates.to?.toISOString() || "",
       email,
       price: totalPrice,
     };

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import Footer from "../../../core/components/Footer";
 import Header from "../../../core/components/Header";
 import ProductList from "../components/ProductList";
@@ -7,13 +8,16 @@ import { Product } from "../../../shared/interfaces/Product";
 import CircularProgress from "@mui/material/CircularProgress";
 
 function ProductsPage() {
+  const [searchParams] = useSearchParams();
+  const companyId = searchParams.get("companyId");
+
   const [products, setProducts] = useState<Product[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const { success, data, error } = await getProducts();
+      const { success, data, error } = await getProducts(companyId);
       if (success && data) {
         setProducts(data);
         setLoadingProducts(false);

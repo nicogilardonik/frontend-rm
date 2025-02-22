@@ -9,9 +9,11 @@ const api = axios.create({
   },
 });
 
-export const _getProducts = async (): Promise<ProductsResponse> => {
+export const getProducts = async (
+  companyId: string
+): Promise<ProductsResponse> => {
   try {
-    const response = await api.get(`search-properties`);
+    const response = await api.get(`search-properties?companyId=${companyId}`);
     return {
       success: true,
       data: response.data,
@@ -24,7 +26,9 @@ export const _getProducts = async (): Promise<ProductsResponse> => {
   }
 };
 
-export const getProducts = async (): Promise<ProductsResponse> => {
+export const _getProducts = async (
+  companyId: string
+): Promise<ProductsResponse> => {
   try {
     console.log("📡 Simulando llamada a la API...");
 
