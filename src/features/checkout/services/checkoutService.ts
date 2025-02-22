@@ -85,7 +85,7 @@ const product = {
   },
   userRef: "Ezi9vrrNV2pPhvtP1qjH",
   isLive: true,
-  minNights: 1,
+  minNights: 2,
   currency: "UYU",
   cleaningFee: 0,
   price: 250,

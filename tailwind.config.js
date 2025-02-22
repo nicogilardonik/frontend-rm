@@ -13,6 +13,9 @@ export default {
         background: "#F3F4F6",
         hover: "#774BEE"
       },
+      fontFamily: {
+        sans: ["Poppins", "sans-serif"],
+      },
     },
   },
   plugins: [],

@@ -12,14 +12,11 @@ import { Product } from "../../../shared/interfaces/Product";
 import { Reservation } from "../interfaces/Reservation";
 
 function CheckoutPage() {
-  const disabledDates = [
-    new Date("2025-02-27"),
-    new Date("2025-02-23"),
-    new Date("2025-02-25"),
-  ];
+  const disabledDates: Date[] = [];
 
   const [searchParams] = useSearchParams();
   const productId = searchParams.get("productId");
+  const companyId = searchParams.get("companyId");
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -36,6 +33,9 @@ function CheckoutPage() {
   const [productError, setProductError] = useState("");
 
   useEffect(() => {
+    console.log("PRODUCT ID:", productId);
+    console.log("COMPANY ID:", companyId);
+
     if (
       !productId ||
       !productId.trim() ||
@@ -135,6 +135,7 @@ function CheckoutPage() {
             <CheckoutCalendar
               disabledDates={disabledDates}
               onDateChange={handleDateChange}
+              minNights={product.minNights}
             />
             {dateError && (
               <p className="text-red-500 text-sm font-semibold mt-2">

@@ -5,11 +5,13 @@ import "react-day-picker/dist/style.css";
 interface CheckoutCalendarProps {
   disabledDates: Date[];
   onDateChange: (range: { from?: Date; to?: Date }) => void;
+  minNights: number;
 }
 
 function CheckoutCalendar({
   disabledDates,
   onDateChange,
+  minNights,
 }: CheckoutCalendarProps) {
   const [selectedRange, setSelectedRange] = useState<{
     from?: Date;
@@ -19,10 +21,11 @@ function CheckoutCalendar({
   const calendarRef = useRef<HTMLDivElement>(null);
   const [errorMessage, setErrorMessage] = useState("");
 
-  // Emitir cambios al componente padre
   useEffect(() => {
-    onDateChange(selectedRange);
-  }, [selectedRange, onDateChange]);
+    if (!errorMessage) {
+      onDateChange(selectedRange);
+    }
+  }, [selectedRange, onDateChange, errorMessage]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -42,30 +45,43 @@ function CheckoutCalendar({
 
     const timeDiff = to.getTime() - from.getTime();
     const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-    const dateArray: Date[] = [];
 
+    if (daysDiff < minNights) {
+      setErrorMessage(`⚠️ Debes reservar al menos ${minNights} noches.`);
+      return false;
+    }
+
+    const dateArray: Date[] = [];
     for (let i = 0; i < daysDiff; i++) {
       const newDate = new Date(from);
       newDate.setDate(from.getDate() + i);
       dateArray.push(newDate);
     }
 
-    return !dateArray.some((date) =>
-      disabledDates.some(
-        (disabledDate) => date.toDateString() === disabledDate.toDateString()
+    if (
+      dateArray.some((date) =>
+        disabledDates.some(
+          (disabledDate) => date.toDateString() === disabledDate.toDateString()
+        )
       )
-    );
-  };
-
-  const handleSelect = (range: { from?: Date; to?: Date }) => {
-    if (isRangeValid(range.from, range.to)) {
-      setSelectedRange(range);
-      onDateChange(range);
-      setErrorMessage("");
-    } else {
+    ) {
       setErrorMessage(
         "⚠️ No puedes seleccionar fechas que ya están reservadas."
       );
+      return false;
+    }
+
+    setErrorMessage("");
+    return true;
+  };
+
+  const handleSelect = (range: { from?: Date; to?: Date }) => {
+    setSelectedRange(range);
+
+    // 📌 Solo validamos si ya hay `from` y `to` seleccionados
+    if (range.from && range.to) {
+      if (!isRangeValid(range.from, range.to)) return;
+      setErrorMessage("");
     }
   };
 
@@ -82,7 +98,7 @@ function CheckoutCalendar({
   return (
     <div className="relative w-full flex flex-col items-center">
       <button
-        className="w-2/3 p-3  border border-violet-600 rounded-3xl shadow-md text-left"
+        className="w-2/3 p-3 border border-violet-600 rounded-3xl shadow-md text-left"
         onClick={() => setIsOpen(!isOpen)}
       >
         📅{" "}

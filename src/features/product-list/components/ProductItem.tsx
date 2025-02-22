@@ -13,8 +13,7 @@ function ProductItem({ product }: ProductItemProps) {
   };
 
   return (
-    <div className="bg-white shadow-lg rounded-xl p-4 flex flex-col sm:flex-row items-center gap-4 transition-transform transform hover:scale-105 hover:shadow-xl">
-      {/* Imagen del producto */}
+    <div className="bg-white shadow-lg rounded-xl p-4 flex flex-col sm:flex-row items-center gap-4 transition-transform transform hover:scale-105 hover:shadow-xl ring-1 ring-gray-200">
       <img
         src={product.mainImage}
         alt={product.propertyName}
