@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
-import { Product } from "../interfaces/Product";
+import { IProduct } from "../../../shared/interfaces/Product";
 
 interface ProductItemProps {
-  product: Product;
+  product: IProduct;
 }
 
 function ProductItem({ product }: ProductItemProps) {

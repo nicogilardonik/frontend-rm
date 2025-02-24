@@ -1,6 +1,6 @@
 import axios from "axios";
-import { Product } from "../../../shared/interfaces/Product";
-import { ProductsResponse } from "../../../core/interfaces/Response";
+import { IProduct } from "../../../shared/interfaces/Product";
+import { IProductsResponse } from "../../../core/interfaces/Response";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -9,9 +9,9 @@ const api = axios.create({
   },
 });
 
-export const getProducts = async (
+export const _getProducts = async (
   companyId: string
-): Promise<ProductsResponse> => {
+): Promise<IProductsResponse> => {
   try {
     const response = await api.get(`search-properties?companyId=${companyId}`);
     return {
@@ -26,11 +26,11 @@ export const getProducts = async (
   }
 };
 
-export const _getProducts = async (
+export const getProducts = async (
   companyId: string
-): Promise<ProductsResponse> => {
+): Promise<IProductsResponse> => {
   try {
-    console.log("📡 Simulando llamada a la API...");
+    console.log(`📡 Simulando llamada a la API... companyId: ${companyId}`);
 
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -48,7 +48,9 @@ export const _getProducts = async (
   }
 };
 
-const products: Product[] = [
+const companyInfo = {};
+
+const products: IProduct[] = [
   {
     ratingSummary: 0,
     shopifyId: "8834088173865",

@@ -8,7 +8,7 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import Divider from "@mui/material/Divider";
 import { getProduct } from "../services/checkoutService";
-import { Product } from "../../../shared/interfaces/Product";
+import { IProduct } from "../../../shared/interfaces/Product";
 import { Reservation } from "../interfaces/Reservation";
 
 function CheckoutPage() {
@@ -24,7 +24,7 @@ function CheckoutPage() {
     from?: Date;
     to?: Date;
   }>({});
-  const [product, setProduct] = useState<Product | null>(null);
+  const [product, setProduct] = useState<IProduct | null>(null);
   const [loadingProduct, setLoadingProduct] = useState(true);
   const [loadingReservation, setLoadingReservation] = useState(false);
 

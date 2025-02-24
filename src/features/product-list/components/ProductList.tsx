@@ -1,8 +1,8 @@
-import { Product } from "../../../shared/interfaces/Product";
+import { IProduct } from "../../../shared/interfaces/Product";
 import ProductItem from "./ProductItem";
 
 interface ProductListProps {
-  products: Product[];
+  products: IProduct[];
 }
 
 function ProductList({ products }: ProductListProps) {
@@ -12,7 +12,7 @@ function ProductList({ products }: ProductListProps) {
         Productos Disponibles
       </h2>
       <div className="space-y-2">
-        {products.map((product: Product) => (
+        {products.map((product: IProduct) => (
           <ProductItem key={product.shopifyId} product={product} />
         ))}
       </div>

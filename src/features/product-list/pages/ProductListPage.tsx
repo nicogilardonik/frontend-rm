@@ -4,14 +4,14 @@ import Footer from "../../../core/components/Footer";
 import Header from "../../../core/components/Header";
 import ProductList from "../components/ProductList";
 import { getProducts } from "../services/productListService";
-import { Product } from "../../../shared/interfaces/Product";
+import { IProduct } from "../../../shared/interfaces/Product";
 import CircularProgress from "@mui/material/CircularProgress";
 
 function ProductsPage() {
   const [searchParams] = useSearchParams();
   const companyId = searchParams.get("companyId");
 
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<IProduct[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ProductResponse } from "../../../core/interfaces/Response";
+import { IProductResponse } from "../../../core/interfaces/Response";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -8,9 +8,9 @@ const api = axios.create({
   },
 });
 
-export const _getProduct = async (
+export const getProduct = async (
   productId: string
-): Promise<ProductResponse> => {
+): Promise<IProductResponse> => {
   try {
     const response = await api.get(`search-properties?propertyId=${productId}`);
     return {
@@ -27,9 +27,9 @@ export const _getProduct = async (
   }
 };
 
-export const getProduct = async (
+export const _getProduct = async (
   checkoutId: string
-): Promise<ProductResponse> => {
+): Promise<IProductResponse> => {
   try {
     console.log("📡 Simulando llamada a la API...");
 

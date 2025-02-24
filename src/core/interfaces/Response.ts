@@ -1,13 +1,13 @@
-import { Product } from "../../shared/interfaces/Product";
+import { IProduct } from "../../shared/interfaces/Product";
 
-export interface ProductResponse {
+export interface IProductResponse {
   success: boolean;
-  data?: Product;
+  data?: IProduct;
   error?: string;
 }
 
-export interface ProductsResponse {
+export interface IProductsResponse {
   success: boolean;
-  data?: Product[];
+  data?: IProduct[];
   error?: string;
 }
