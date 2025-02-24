@@ -7,11 +7,13 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: "#5B27EC",
+        // primary: "#5B27EC",
+        primary: "var(--color-primary)",
         secondary: "#EAB308",
         accent: "#14B8A6",
         background: "#F3F4F6",
-        hover: "#774BEE"
+        hover: "--color-primary-hover"
+        // hover: "#774BEE"
       },
       fontFamily: {
         sans: ["Poppins", "sans-serif"],

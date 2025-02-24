@@ -1,6 +1,10 @@
 import axios from "axios";
 import { IProduct } from "../../../shared/interfaces/Product";
-import { IProductsResponse } from "../../../core/interfaces/Response";
+import {
+  ICompanyResponse,
+  IProductsResponse,
+} from "../../../core/interfaces/Response";
+import { ICompany } from "../interfaces/Company";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -48,7 +52,35 @@ export const getProducts = async (
   }
 };
 
-const companyInfo = {};
+export const getCompanyInfo = async (
+  companyId: string
+): Promise<ICompanyResponse> => {
+  try {
+    console.log(`📡 Simulando llamada a la API... companyId: ${companyId}`);
+
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({
+          success: true,
+          data: companyInfo,
+        });
+      }, 1000);
+    });
+  } catch (error) {
+    return {
+      success: false,
+      error: "❌ No se pudo cargar la información de la Compañía.",
+    };
+  }
+};
+
+const companyInfo: ICompany = {
+  id: "1",
+  name: "Rentalomio",
+  image:
+    "https://ugc.production.linktr.ee/6d075299-210f-44c5-97c5-c49146314d1f_dJMlaretdZv1qakUtk37MqbHH6lX-SA6DVn6upjweuZwpYJD4N9HBIG5oYdA04ZTbtzuvF7u9g-s800-c-k-c0x00ffffff-no-r.jpeg?io=true&size=avatar-hero-v1_0",
+  color: "#1E40AF",
+};
 
 const products: IProduct[] = [
   {
