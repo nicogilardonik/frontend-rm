@@ -14,7 +14,7 @@ const cfNTLC = axios.create({
 });
 
 const apiNTLC = axios.create({
-  baseURL: import.meta.env.VITE_NTLC_BASE_URL,
+  baseURL: import.meta.env.VITE_API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
@@ -29,7 +29,7 @@ export const getProducts = async (
     );
     return {
       success: true,
-      data: response.data,
+      data: response.data.properties,
     };
   } catch (error) {
     return {

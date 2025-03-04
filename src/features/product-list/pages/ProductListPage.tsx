@@ -20,7 +20,7 @@ function ProductsPage() {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const { success, data, error } = await getProducts(companyId);
+      const { success, data, error } = await getProducts(companyId || "");
       if (success && data) {
         setProducts(data);
       } else if (error) {
@@ -30,7 +30,7 @@ function ProductsPage() {
     };
 
     const fetchCompanyInfo = async () => {
-      const { success, data, error } = await getCompanyInfo(companyId);
+      const { success, data, error } = await getCompanyInfo(companyId || "");
       if (success && data) {
         document.documentElement.style.setProperty(
           "--color-primary",
