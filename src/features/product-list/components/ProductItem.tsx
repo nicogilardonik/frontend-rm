@@ -8,7 +8,7 @@ interface ProductItemProps {
 function ProductItem({ product }: ProductItemProps) {
   const navigate = useNavigate();
 
-  const onReserveClick = (productId: number) => {
+  const onReserveClick = (productId: string) => {
     navigate(`/checkout?productId=${productId}`);
   };
 
