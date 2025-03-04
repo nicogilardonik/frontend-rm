@@ -4,20 +4,29 @@ import {
   ICompanyResponse,
   IProductsResponse,
 } from "../../../core/interfaces/Response";
-import { ICompany } from "../interfaces/Company";
+import { ICompany } from "../../../shared/interfaces/Company";
 
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+const cfNTLC = axios.create({
+  baseURL: import.meta.env.VITE_CF_BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-export const _getProducts = async (
+const apiNTLC = axios.create({
+  baseURL: import.meta.env.VITE_NTLC_BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+export const getProducts = async (
   companyId: string
 ): Promise<IProductsResponse> => {
   try {
-    const response = await api.get(`search-properties?companyId=${companyId}`);
+    const response = await cfNTLC.get(
+      `search-properties?companyId=${companyId}`
+    );
     return {
       success: true,
       data: response.data,
@@ -30,7 +39,7 @@ export const _getProducts = async (
   }
 };
 
-export const getProducts = async (
+export const _getProducts = async (
   companyId: string
 ): Promise<IProductsResponse> => {
   try {
@@ -56,6 +65,23 @@ export const getCompanyInfo = async (
   companyId: string
 ): Promise<ICompanyResponse> => {
   try {
+    const response = await apiNTLC.get(`company/${companyId}`);
+    return {
+      success: true,
+      data: response.data,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: "❌ No se pudieron cargar los productos.",
+    };
+  }
+};
+
+export const _getCompanyInfo = async (
+  companyId: string
+): Promise<ICompanyResponse> => {
+  try {
     console.log(`📡 Simulando llamada a la API... companyId: ${companyId}`);
 
     return new Promise((resolve) => {
@@ -75,11 +101,36 @@ export const getCompanyInfo = async (
 };
 
 const companyInfo: ICompany = {
-  id: "1",
-  name: "Rentalomio",
-  image:
-    "https://ugc.production.linktr.ee/6d075299-210f-44c5-97c5-c49146314d1f_dJMlaretdZv1qakUtk37MqbHH6lX-SA6DVn6upjweuZwpYJD4N9HBIG5oYdA04ZTbtzuvF7u9g-s800-c-k-c0x00ffffff-no-r.jpeg?io=true&size=avatar-hero-v1_0",
-  color: "#1E40AF",
+  id: "XU6J1fz2mjOgaciaW4Xz",
+  name: "RentaloMio",
+  description: "We are awesome!",
+  phone_number: "094476968",
+  website: "www.rentalomio.com",
+  employee_count: 4,
+  industry: "Rental Services",
+  owner: {
+    _firestore: {
+      projectId: "rm-dashboard-108a6",
+    },
+    _path: {
+      segments: ["users", "41bqSs6XGXQG82d3HuVIWpiKBxB3"],
+    },
+    _converter: {},
+  },
+  collaborators: [
+    {
+      _firestore: {
+        projectId: "rm-dashboard-108a6",
+      },
+      _path: {
+        segments: ["users", "41bqSs6XGXQG82d3HuVIWpiKBxB3"],
+      },
+      _converter: {},
+    },
+  ],
+  logo_url:
+    "https://cdn.shopify.com/s/files/1/0696/9052/3945/files/rentalo-mio-logo_w300.png?v=1726065126",
+  primaryColor: "#5b26ea",
 };
 
 const products: IProduct[] = [

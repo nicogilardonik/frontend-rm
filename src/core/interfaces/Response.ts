@@ -1,4 +1,4 @@
-import { ICompany } from "../../features/product-list/interfaces/Company";
+import { ICompany } from "../../shared/interfaces/Company";
 import { IProduct } from "../../shared/interfaces/Product";
 
 export interface IProductResponse {

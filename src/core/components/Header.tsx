@@ -1,4 +1,4 @@
-import { ICompany } from "../../features/product-list/interfaces/Company";
+import { ICompany } from "../../shared/interfaces/Company";
 
 interface HeaderProps {
   company: ICompany;
@@ -10,7 +10,7 @@ function Header({ company }: HeaderProps) {
       <div className="flex items-center gap-2">
         <div className="w-12 h-12 md:w-16 md:h-16 flex-shrink-0">
           <img
-            src={company.image || "/fallback-image.jpg"}
+            src={company.logo_url || "/fallback-image.jpg"}
             alt={company.name}
             className="w-full h-full rounded-full object-cover border-2 border-white"
           />

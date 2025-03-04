@@ -6,7 +6,7 @@ import ProductList from "../components/ProductList";
 import { getProducts, getCompanyInfo } from "../services/productListService";
 import { IProduct } from "../../../shared/interfaces/Product";
 import CircularProgress from "@mui/material/CircularProgress";
-import { ICompany } from "../interfaces/Company";
+import { ICompany } from "../../../shared/interfaces/Company";
 
 function ProductsPage() {
   const [searchParams] = useSearchParams();
@@ -34,7 +34,7 @@ function ProductsPage() {
       if (success && data) {
         document.documentElement.style.setProperty(
           "--color-primary",
-          data.color || "#1E40AF"
+          data.primaryColor || "#1E40AF"
         );
         setCompany(data);
       } else if (error) {
