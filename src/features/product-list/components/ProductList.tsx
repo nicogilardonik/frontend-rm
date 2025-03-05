@@ -7,7 +7,7 @@ interface ProductListProps {
 
 function ProductList({ products }: ProductListProps) {
   return (
-    <div className="bg-white shadow-md rounded-lg p-4">
+    <div className="bg-white shadow-md rounded-lg p-4 mt-4 self-start">
       <h2 className="text-2xl font-bold text-center mb-4">
         Productos Disponibles
       </h2>

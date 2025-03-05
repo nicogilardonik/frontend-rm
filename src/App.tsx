@@ -11,7 +11,7 @@ const ProductListPage = lazy(
 
 function App() {
   return (
-    <div className="w-full h-screen flex flex-col">
+    <div className="w-full min-h-screen bg-gray-100 flex flex-col overflow-x-hidden">
       <Routes>
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/" element={<ProductListPage />} />

@@ -48,7 +48,7 @@ function ProductsPage() {
   }, []);
 
   return (
-    <div className="h-screen bg-gray-100 flex flex-col">
+    <div className="h-screen  flex flex-col">
       {company && <Header company={company} />}
 
       {(loadingProducts || loadingCompany) && (
