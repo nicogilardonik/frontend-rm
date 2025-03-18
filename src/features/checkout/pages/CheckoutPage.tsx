@@ -18,6 +18,7 @@ import { IProduct } from "../../../shared/interfaces/Product";
 import { ReservationRM } from "../interfaces/ReservationRM";
 import { ReservationMP } from "../interfaces/ReservationMP";
 import Header from "../../../core/components/Header";
+import CheckoutProductInfo from "../components/CheckoutProductInfo";
 
 function CheckoutPage() {
   const disabledDates: Date[] = [];
@@ -182,9 +183,10 @@ function CheckoutPage() {
   };
 
   return (
-    <div className="h-screen  flex flex-col">
+    <div className="h-screen flex flex-col">
       {company && <Header company={company} />}
-      <div className=" bg-gray-100 flex flex-col items-center justify-center p-4 mt-[3rem]">
+
+      <div className="flex-grow bg-gray-100 flex flex-col items-center justify-center p-4">
         {loadingProduct && (
           <Backdrop
             sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
@@ -201,6 +203,8 @@ function CheckoutPage() {
 
         {!loadingProduct && product && (
           <div className="w-full max-w-xl shadow-xl rounded-xl bg-white overflow-hidden">
+            <CheckoutProductInfo product={product} />
+            <Divider variant="middle" />
             <div className="p-4">
               <CheckoutCalendar
                 disabledDates={disabledDates}
@@ -246,9 +250,11 @@ function CheckoutPage() {
         )}
 
         {!loadingProduct && productError && (
-          <div className="w-full max-w-xl  overflow-hidden">
-            <div className="text-center text-red-500 text-lg font-semibold p-6">
-              {productError}
+          <div className="flex flex-col justify-center items-center h-[50vh]">
+            <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-md">
+              <p className="text-center text-red-500 text-lg font-semibold">
+                {productError}
+              </p>
             </div>
           </div>
         )}

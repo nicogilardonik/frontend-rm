@@ -17,9 +17,9 @@ function CheckoutDetails({
     : null;
 
   return (
-    <div className="p-6 bg-white">
+    <div className="p-4 bg-white">
       <h2 className="text-lg font-semibold text-gray-900">Detalle del Pago</h2>
-      <p className="text-gray-600 text-sm mb-4">
+      <p className="text-gray-600 text-xs mb-4">
         Detalle de lo que pagarás por esta reserva entre las fechas
         seleccionadas.
       </p>
@@ -39,7 +39,7 @@ function CheckoutDetails({
 
         {!hasDiscount && (
           <div className="flex justify-between">
-            <span className="font-semibold text-gray-900">Precio por día</span>
+            <span className=" text-gray-600">Precio por día</span>
             <span className="font-bold">{`UYU ${pricePerDay}`}</span>
           </div>
         )}

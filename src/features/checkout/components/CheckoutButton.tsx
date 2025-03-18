@@ -38,7 +38,7 @@ function CheckoutButtonZone({
 
   return (
     <div className="p-4 bg-white flex flex-col items-center space-y-4 w-full">
-      <div className="w-full pt-4">
+      <div className="w-full ">
         <div className="flex justify-between w-full">
           <span className="text-gray-700 font-semibold">
             Total por {numberOfDays} día(s)
