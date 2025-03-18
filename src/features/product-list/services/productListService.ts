@@ -18,6 +18,10 @@ const apiRM = axios.create({
   },
 });
 
+export const setCompanyIdHeader = (companyId: string) => {
+  apiRM.defaults.headers["rm-comp-id"] = companyId;
+};
+
 export const getProducts = async (
   companyId: string
 ): Promise<IProductsResponse> => {
@@ -39,7 +43,7 @@ export const getCompanyInfo = async (
   companyId: string
 ): Promise<ICompanyResponse> => {
   try {
-    const response = await apiRM.get(`company/${companyId}`);
+    const response = await apiRM.get(`companies/${companyId}`);
     return {
       success: true,
       data: response.data,

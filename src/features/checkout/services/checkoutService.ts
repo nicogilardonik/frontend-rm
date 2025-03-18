@@ -1,8 +1,5 @@
 import axios from "axios";
-import {
-  ICompanyResponse,
-  IProductResponse,
-} from "../../../core/interfaces/Response";
+import { IProductResponse } from "../../../core/interfaces/Response";
 import { ReservationRM } from "../interfaces/ReservationRM";
 import { ReservationMP } from "../interfaces/ReservationMP";
 

@@ -1,17 +1,11 @@
-import { useNavigate } from "react-router-dom";
 import { IProduct } from "../../../shared/interfaces/Product";
 
 interface ProductItemProps {
   product: IProduct;
+  onReserveClick: (productId: string) => void;
 }
 
-function ProductItem({ product }: ProductItemProps) {
-  const navigate = useNavigate();
-
-  const onReserveClick = (productId: string) => {
-    navigate(`/checkout?productId=${productId}`);
-  };
-
+function ProductItem({ product, onReserveClick }: ProductItemProps) {
   return (
     <div
       className="bg-white shadow-lg rounded-xl p-4 flex flex-col sm:flex-row items-center gap-4 transition-transform transform hover:scale-105 hover:shadow-xl ring-1 ring-gray-200 mx-auto

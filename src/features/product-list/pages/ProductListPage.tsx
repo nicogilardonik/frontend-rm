@@ -1,14 +1,19 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Footer from "../../../core/components/Footer";
 import Header from "../../../core/components/Header";
 import ProductList from "../components/ProductList";
-import { getProducts, getCompanyInfo } from "../services/productListService";
+import {
+  getProducts,
+  getCompanyInfo,
+  setCompanyIdHeader,
+} from "../services/productListService";
 import { IProduct } from "../../../shared/interfaces/Product";
 import CircularProgress from "@mui/material/CircularProgress";
 import { ICompany } from "../../../shared/interfaces/Company";
 
 function ProductsPage() {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const companyId = searchParams.get("companyId");
 
@@ -19,6 +24,7 @@ function ProductsPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    setCompanyIdHeader(companyId!);
     const fetchCompanyInfo = async () => {
       const { success, data, error } = await getCompanyInfo(companyId || "");
       if (success && data) {
@@ -49,6 +55,10 @@ function ProductsPage() {
     fetchCompanyInfo();
   }, []);
 
+  const onReserveClick = (productId: string) => {
+    navigate(`/checkout?productId=${productId}&companyId=${companyId}`);
+  };
+
   return (
     <div className="h-screen  flex flex-col">
       {company && <Header company={company} />}
@@ -68,7 +78,7 @@ function ProductsPage() {
 
       {!loadingProducts && !loadingCompany && !error && products.length > 0 && (
         <main className="flex-grow flex items-center justify-center">
-          <ProductList products={products} />
+          <ProductList products={products} onReserveClick={onReserveClick} />
         </main>
       )}
 
