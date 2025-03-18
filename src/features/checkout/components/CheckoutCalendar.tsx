@@ -78,7 +78,6 @@ function CheckoutCalendar({
   const handleSelect = (range: { from?: Date; to?: Date }) => {
     setSelectedRange(range);
 
-    // 📌 Solo validamos si ya hay `from` y `to` seleccionados
     if (range.from && range.to) {
       if (!isRangeValid(range.from, range.to)) return;
       setErrorMessage("");

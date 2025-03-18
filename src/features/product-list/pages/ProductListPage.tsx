@@ -19,16 +19,6 @@ function ProductsPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      const { success, data, error } = await getProducts(companyId || "");
-      if (success && data) {
-        setProducts(data);
-      } else if (error) {
-        setError(error);
-      }
-      setLoadingProducts(false);
-    };
-
     const fetchCompanyInfo = async () => {
       const { success, data, error } = await getCompanyInfo(companyId || "");
       if (success && data) {
@@ -38,9 +28,21 @@ function ProductsPage() {
         );
         setCompany(data);
       } else if (error) {
+        console.log(error);
         setError(error);
       }
       setLoadingCompany(false);
+    };
+
+    const fetchProducts = async () => {
+      const { success, data, error } = await getProducts(companyId || "");
+      if (success && data) {
+        setProducts(data);
+      } else if (error) {
+        setError(error);
+        console.log(error);
+      }
+      setLoadingProducts(false);
     };
 
     fetchProducts();
@@ -59,7 +61,7 @@ function ProductsPage() {
       )}
 
       {!loadingProducts && !loadingCompany && error && (
-        <div className="flex flex-col items-center justify-center flex-grow text-center">
+        <div className="flex flex-col items-center justify-center flex-grow text-center ">
           <p className="text-red-500 text-lg font-semibold">{error}</p>
         </div>
       )}

@@ -7,9 +7,15 @@ import CheckoutForm from "../components/CheckoutForm";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import Divider from "@mui/material/Divider";
-import { getProduct } from "../services/checkoutService";
+import {
+  createReservationMP,
+  createReservationRM,
+  getProduct,
+  setCompanyIdHeader,
+} from "../services/checkoutService";
 import { IProduct } from "../../../shared/interfaces/Product";
-import { Reservation } from "../interfaces/Reservation";
+import { ReservationRM } from "../interfaces/ReservationRM";
+import { ReservationMP } from "../interfaces/ReservationMP";
 
 function CheckoutPage() {
   const disabledDates: Date[] = [];
@@ -30,38 +36,51 @@ function CheckoutPage() {
 
   const [emailError, setEmailError] = useState("");
   const [dateError, setDateError] = useState("");
-  const [productError, setProductError] = useState("");
+  const [productError, setError] = useState("");
 
   useEffect(() => {
-    console.log("PRODUCT ID:", productId);
-    console.log("COMPANY ID:", companyId);
-
     if (
-      !productId ||
-      !productId.trim() ||
-      productId === "undefined" ||
-      productId === "null"
+      !companyId ||
+      companyId.trim() === "" ||
+      companyId === "undefined" ||
+      companyId === "null"
     ) {
-      navigate(companyId ? `/?companyId=${companyId}` : "/");
+      setError("❌ Compañía inválida.");
+      setLoadingProduct(false);
       return;
     }
 
+    if (
+      !productId ||
+      productId.trim() === "" ||
+      productId === "undefined" ||
+      productId === "null"
+    ) {
+      navigate(`/?companyId=${companyId}`);
+      return;
+    }
+
+    setCompanyIdHeader(companyId!);
+
     const fetchData = async () => {
       const { success, data, error } = await getProduct(productId);
+
       if (success && data) {
         setProduct(data);
         setLoadingProduct(false);
+        setCompanyIdHeader(companyId!);
       } else if (error) {
-        setProductError(error);
+        setError(error);
         setLoadingProduct(false);
+        console.log(error);
         setTimeout(() => {
-          navigate(companyId ? `/?companyId=${companyId}` : "/");
+          navigate(`/?companyId=${companyId}`);
         }, 3500);
       }
     };
 
     fetchData();
-  }, [productId, navigate]);
+  }, [productId, companyId, navigate]);
 
   const handleDateChange = (range: { from?: Date; to?: Date }) => {
     setSelectedDates(range);
@@ -73,46 +92,69 @@ function CheckoutPage() {
     setEmailError("");
   };
 
-  const handleReserveClick = async (totalPrice: number) => {
-    let hasError = false;
-
+  const validations = () => {
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       setEmailError("❌ Ingresa un email válido.");
-      hasError = true;
+      return true;
     }
 
     if (!selectedDates.from || !selectedDates.to) {
       setDateError("❌ Selecciona un rango de fechas válido.");
-      hasError = true;
+      return true;
     }
+  };
 
-    if (hasError) return;
+  const convertToUTC = (date?: Date) => {
+    if (!date) return "";
+    return new Date(
+      Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+    ).toISOString();
+  };
 
+  const handleReserveClick = async (totalPrice: number) => {
+    if (validations()) {
+      return;
+    }
     setLoadingReservation(true);
-
-    const reservationData: Reservation = {
-      productId: productId!,
-      from: selectedDates.from ? selectedDates.from.toISOString() : "",
-      to: selectedDates.to?.toISOString() || "",
-      email,
-      price: totalPrice,
+    const reservationRM: ReservationRM = {
+      propertyRef: productId!,
+      tripBeginDate: convertToUTC(selectedDates.from),
+      tripEndDate: convertToUTC(selectedDates.to),
+      userEmail: email,
     };
 
-    console.log("📦 Reserva enviada:", reservationData);
-
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      alert("✅ Reserva confirmada 🎉");
-    } catch (error) {
-      console.error("Error al procesar la reserva:", error);
-    } finally {
+    const { success, data, error } = await createReservationRM(reservationRM);
+    if (success && data) {
+      reservationMP(data.id, totalPrice);
+    } else if (error) {
       setLoadingReservation(false);
+      setError(error);
+    }
+  };
+
+  const reservationMP = async (tripRef: string, totalPrice: number) => {
+    const reservationMP: ReservationMP = {
+      email: email,
+      price: totalPrice,
+      currency: "UYU",
+      userName: email,
+      userLastname: email,
+      tripRef: tripRef, //lo agrego asi lo pongo en los links de MP
+      productId: product!.id, //lo agrego asi lo pongo en los links de MP
+      productTitle: product!.propertyName,
+      productImage: product!.mainImage,
+    };
+    const { success, data, error } = await createReservationMP(reservationMP);
+    if (success && data) {
+      window.open(data.init_point, "_blank")?.focus();
+    } else if (error) {
+      setLoadingReservation(false);
+      setError(error);
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
-      {/* Loading Backdrop */}
       {loadingProduct && (
         <Backdrop
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
@@ -127,10 +169,8 @@ function CheckoutPage() {
         </Backdrop>
       )}
 
-      {/* Si el producto se carga correctamente */}
       {!loadingProduct && product && (
         <div className="w-full max-w-xl shadow-xl rounded-xl bg-white overflow-hidden">
-          {/* 📆 Calendario */}
           <div className="p-4">
             <CheckoutCalendar
               disabledDates={disabledDates}
@@ -145,7 +185,6 @@ function CheckoutPage() {
           </div>
           <Divider variant="middle" />
 
-          {/* 📧 Formulario de Email */}
           <div className="p-4">
             <CheckoutForm onEmailChange={handleEmailChange} />
             {emailError && (
@@ -156,7 +195,6 @@ function CheckoutPage() {
           </div>
           <Divider variant="middle" />
 
-          {/* 🏷️ Detalles del Pago */}
           <div className="p-4">
             <CheckoutDetails
               pricePerDay={product.price}
@@ -165,7 +203,6 @@ function CheckoutPage() {
           </div>
           <Divider variant="middle" />
 
-          {/* ✅ Botón de Reserva */}
           <div className="p-4 flex flex-col items-center">
             <CheckoutButtonZone
               pricePerDay={product.price}
@@ -178,9 +215,8 @@ function CheckoutPage() {
         </div>
       )}
 
-      {/* Si hay un error al cargar el producto */}
       {!loadingProduct && productError && (
-        <div className="w-full max-w-xl shadow-xl rounded-xl bg-white overflow-hidden">
+        <div className="w-full max-w-xl  overflow-hidden">
           <div className="text-center text-red-500 text-lg font-semibold p-6">
             {productError}
           </div>
