@@ -10,12 +10,14 @@ import Divider from "@mui/material/Divider";
 import {
   createReservationMP,
   createReservationRM,
+  getCompanyInfo,
   getProduct,
   setCompanyIdHeader,
 } from "../services/checkoutService";
 import { IProduct } from "../../../shared/interfaces/Product";
 import { ReservationRM } from "../interfaces/ReservationRM";
 import { ReservationMP } from "../interfaces/ReservationMP";
+import Header from "../../../core/components/Header";
 
 function CheckoutPage() {
   const disabledDates: Date[] = [];
@@ -25,6 +27,7 @@ function CheckoutPage() {
   const companyId = searchParams.get("companyId");
   const navigate = useNavigate();
 
+  const [company, setCompany] = useState<ICompany>();
   const [email, setEmail] = useState("");
   const [selectedDates, setSelectedDates] = useState<{
     from?: Date;
@@ -39,47 +42,72 @@ function CheckoutPage() {
   const [productError, setError] = useState("");
 
   useEffect(() => {
-    if (
-      !companyId ||
-      companyId.trim() === "" ||
-      companyId === "undefined" ||
-      companyId === "null"
-    ) {
-      setError("❌ Compañía inválida.");
-      setLoadingProduct(false);
-      return;
-    }
-
-    if (
-      !productId ||
-      productId.trim() === "" ||
-      productId === "undefined" ||
-      productId === "null"
-    ) {
-      navigate(`/?companyId=${companyId}`);
-      return;
-    }
-
-    setCompanyIdHeader(companyId!);
-
-    const fetchData = async () => {
-      const { success, data, error } = await getProduct(productId);
-
-      if (success && data) {
-        setProduct(data);
+    const validateParams = () => {
+      if (
+        !companyId ||
+        companyId.trim() === "" ||
+        companyId === "undefined" ||
+        companyId === "null"
+      ) {
+        setError("❌ Compañía inválida.");
         setLoadingProduct(false);
-        setCompanyIdHeader(companyId!);
-      } else if (error) {
-        setError(error);
-        setLoadingProduct(false);
-        console.log(error);
-        setTimeout(() => {
-          navigate(`/?companyId=${companyId}`);
-        }, 3500);
+        return false;
       }
+
+      if (
+        !productId ||
+        productId.trim() === "" ||
+        productId === "undefined" ||
+        productId === "null"
+      ) {
+        navigate(`/?companyId=${companyId}`);
+        return false;
+      }
+
+      return true;
     };
 
-    fetchData();
+    const fetchCompanyAndProduct = async () => {
+      setLoadingProduct(true);
+
+      const {
+        success: companySuccess,
+        data: companyData,
+        error: companyError,
+      } = await getCompanyInfo(companyId!);
+
+      if (!companySuccess || !companyData) {
+        setError(companyError || "❌ Compañía inválida.");
+        setLoadingProduct(false);
+        return;
+      }
+      document.documentElement.style.setProperty(
+        "--color-primary",
+        companyData.primaryColor || "#1E40AF"
+      );
+      setCompany(companyData);
+
+      const {
+        success: productSuccess,
+        data: productData,
+        error: productError,
+      } = await getProduct(productId!);
+
+      if (productSuccess && productData) {
+        setProduct(productData);
+        setCompanyIdHeader(companyId!);
+      } else {
+        setError(productError || "❌ Error al cargar el producto.");
+        setTimeout(() => navigate(`/?companyId=${companyId}`), 3500);
+      }
+
+      setLoadingProduct(false);
+    };
+
+    if (validateParams()) {
+      setCompanyIdHeader(companyId!);
+      fetchCompanyAndProduct();
+    }
   }, [productId, companyId, navigate]);
 
   const handleDateChange = (range: { from?: Date; to?: Date }) => {
@@ -154,74 +182,77 @@ function CheckoutPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
-      {loadingProduct && (
-        <Backdrop
-          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={true}
-        >
-          <div className="flex flex-col items-center">
-            <CircularProgress color="inherit" />
-            <p className="mt-4 text-lg font-semibold">
-              ⏳ Cargando producto...
-            </p>
-          </div>
-        </Backdrop>
-      )}
-
-      {!loadingProduct && product && (
-        <div className="w-full max-w-xl shadow-xl rounded-xl bg-white overflow-hidden">
-          <div className="p-4">
-            <CheckoutCalendar
-              disabledDates={disabledDates}
-              onDateChange={handleDateChange}
-              minNights={product.minNights}
-            />
-            {dateError && (
-              <p className="text-red-500 text-sm font-semibold mt-2">
-                {dateError}
+    <div className="h-screen  flex flex-col">
+      {company && <Header company={company} />}
+      <div className=" bg-gray-100 flex flex-col items-center justify-center p-4 mt-[3rem]">
+        {loadingProduct && (
+          <Backdrop
+            sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            open={true}
+          >
+            <div className="flex flex-col items-center">
+              <CircularProgress color="inherit" />
+              <p className="mt-4 text-lg font-semibold">
+                ⏳ Cargando producto...
               </p>
-            )}
-          </div>
-          <Divider variant="middle" />
+            </div>
+          </Backdrop>
+        )}
 
-          <div className="p-4">
-            <CheckoutForm onEmailChange={handleEmailChange} />
-            {emailError && (
-              <p className="text-red-500 text-sm font-semibold mt-2">
-                {emailError}
-              </p>
-            )}
-          </div>
-          <Divider variant="middle" />
+        {!loadingProduct && product && (
+          <div className="w-full max-w-xl shadow-xl rounded-xl bg-white overflow-hidden">
+            <div className="p-4">
+              <CheckoutCalendar
+                disabledDates={disabledDates}
+                onDateChange={handleDateChange}
+                minNights={product.minNights}
+              />
+              {dateError && (
+                <p className="text-red-500 text-sm font-semibold mt-2">
+                  {dateError}
+                </p>
+              )}
+            </div>
+            <Divider variant="middle" />
 
-          <div className="p-4">
-            <CheckoutDetails
-              pricePerDay={product.price}
-              discountAmount={product.discountAmount}
-            />
-          </div>
-          <Divider variant="middle" />
+            <div className="p-4">
+              <CheckoutForm onEmailChange={handleEmailChange} />
+              {emailError && (
+                <p className="text-red-500 text-sm font-semibold mt-2">
+                  {emailError}
+                </p>
+              )}
+            </div>
+            <Divider variant="middle" />
 
-          <div className="p-4 flex flex-col items-center">
-            <CheckoutButtonZone
-              pricePerDay={product.price}
-              selectedDates={selectedDates}
-              discountAmount={product.discountAmount}
-              loading={loadingReservation}
-              onReserveClick={handleReserveClick}
-            />
-          </div>
-        </div>
-      )}
+            <div className="p-4">
+              <CheckoutDetails
+                pricePerDay={product.price}
+                discountAmount={product.discountAmount}
+              />
+            </div>
+            <Divider variant="middle" />
 
-      {!loadingProduct && productError && (
-        <div className="w-full max-w-xl  overflow-hidden">
-          <div className="text-center text-red-500 text-lg font-semibold p-6">
-            {productError}
+            <div className="p-4 flex flex-col items-center">
+              <CheckoutButtonZone
+                pricePerDay={product.price}
+                selectedDates={selectedDates}
+                discountAmount={product.discountAmount}
+                loading={loadingReservation}
+                onReserveClick={handleReserveClick}
+              />
+            </div>
           </div>
-        </div>
-      )}
+        )}
+
+        {!loadingProduct && productError && (
+          <div className="w-full max-w-xl  overflow-hidden">
+            <div className="text-center text-red-500 text-lg font-semibold p-6">
+              {productError}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

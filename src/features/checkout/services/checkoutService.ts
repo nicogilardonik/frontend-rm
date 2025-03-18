@@ -1,5 +1,8 @@
 import axios from "axios";
-import { IProductResponse } from "../../../core/interfaces/Response";
+import {
+  ICompanyResponse,
+  IProductResponse,
+} from "../../../core/interfaces/Response";
 import { ReservationRM } from "../interfaces/ReservationRM";
 import { ReservationMP } from "../interfaces/ReservationMP";
 
@@ -104,6 +107,23 @@ export const createReservationMP = async (reservation: ReservationMP) => {
     return {
       success: false,
       error: "❌ No se pudo crear la reserva, intente mas tarde.",
+    };
+  }
+};
+
+export const getCompanyInfo = async (
+  companyId: string
+): Promise<ICompanyResponse> => {
+  try {
+    const response = await apiRM.get(`companies/${companyId}`);
+    return {
+      success: true,
+      data: response.data,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: "❌ No se pudo cargar la información de la compañía.",
     };
   }
 };
