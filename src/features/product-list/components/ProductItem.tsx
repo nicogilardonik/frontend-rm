@@ -11,11 +11,13 @@ function ProductItem({ product, onReserveClick }: ProductItemProps) {
       className="bg-white shadow-lg rounded-xl p-4 flex flex-col sm:flex-row items-center gap-4 transition-transform transform hover:scale-105 hover:shadow-xl ring-1 ring-gray-200 mx-auto
       md:max-w-[650px] md:min-w-[650px]"
     >
-      <img
-        src={product.mainImage}
-        alt={product.propertyName}
-        className="w-full sm:w-24 h-24 rounded-lg object-cover border border-gray-200"
-      />
+      <div className="w-24 h-30 flex items-center justify-center overflow-hidden rounded-lg">
+        <img
+          src={product.mainImage}
+          alt={product.propertyName}
+          className="w-full h-full object-contain"
+        />
+      </div>
 
       <div className="flex-1 w-full text-center sm:text-left">
         <h3 className="text-lg font-semibold text-gray-900 line-clamp-2 overflow-hidden text-ellipsis">
