@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { DayPicker } from "react-day-picker";
+import { DateRange, DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 
 interface CheckoutCalendarProps {
@@ -13,17 +13,17 @@ function CheckoutCalendar({
   onDateChange,
   minNights,
 }: CheckoutCalendarProps) {
-  const [selectedRange, setSelectedRange] = useState<{
-    from?: Date;
-    to?: Date;
-  }>({});
+  const [selectedRange, setSelectedRange] = useState<DateRange | undefined>();
+
   const [isOpen, setIsOpen] = useState(false);
   const calendarRef = useRef<HTMLDivElement>(null);
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     if (!errorMessage) {
-      onDateChange(selectedRange);
+      if (selectedRange) {
+        onDateChange(selectedRange);
+      }
     }
   }, [selectedRange, onDateChange, errorMessage]);
 
@@ -75,8 +75,8 @@ function CheckoutCalendar({
     return true;
   };
 
-  const handleSelect = (range: { from?: Date; to?: Date }) => {
-    setSelectedRange(range);
+  const handleSelect = (range: DateRange) => {
+    setSelectedRange(range.from && range.to ? range : undefined);
 
     if (range.from && range.to) {
       if (!isRangeValid(range.from, range.to)) return;
@@ -101,7 +101,7 @@ function CheckoutCalendar({
         onClick={() => setIsOpen(!isOpen)}
       >
         📅{" "}
-        {selectedRange.from
+        {selectedRange?.from
           ? `Desde ${formatDate(selectedRange.from)} al ${formatDate(
               selectedRange.to
             )}`
@@ -126,6 +126,7 @@ function CheckoutCalendar({
               range_middle: "range-middle",
               disabled: "day-disabled",
             }}
+            required
           />
         </div>
       )}
