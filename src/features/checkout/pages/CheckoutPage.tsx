@@ -19,6 +19,7 @@ import { ReservationRM } from "../interfaces/ReservationRM";
 import { ReservationMP } from "../interfaces/ReservationMP";
 import Header from "../../../core/components/Header";
 import CheckoutProductInfo from "../components/CheckoutProductInfo";
+import { ICompany } from "../../../shared/interfaces/Company";
 
 function CheckoutPage() {
   const disabledDates: Date[] = [];
@@ -34,6 +35,7 @@ function CheckoutPage() {
     from?: Date;
     to?: Date;
   }>({});
+  const [buttonDisabled, setButtonDisabled] = useState(false);
   const [product, setProduct] = useState<IProduct | null>(null);
   const [loadingProduct, setLoadingProduct] = useState(true);
   const [loadingReservation, setLoadingReservation] = useState(false);
@@ -176,6 +178,8 @@ function CheckoutPage() {
     const { success, data, error } = await createReservationMP(reservationMP);
     if (success && data) {
       window.open(data.init_point, "_blank")?.focus();
+      setLoadingReservation(false);
+      setButtonDisabled(true);
     } else if (error) {
       setLoadingReservation(false);
       setError(error);
@@ -184,7 +188,7 @@ function CheckoutPage() {
 
   return (
     <div className="h-screen flex flex-col">
-      {company && <Header company={company} />}
+      {!loadingProduct && company && <Header company={company} />}
 
       <div className="flex-grow bg-gray-100 flex flex-col items-center justify-center p-4">
         {loadingProduct && (
@@ -244,6 +248,7 @@ function CheckoutPage() {
                 discountAmount={product.discountAmount}
                 loading={loadingReservation}
                 onReserveClick={handleReserveClick}
+                disabled={buttonDisabled}
               />
             </div>
           </div>

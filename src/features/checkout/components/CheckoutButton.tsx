@@ -6,6 +6,7 @@ interface CheckoutButtonZoneProps {
   selectedDates: { from?: Date; to?: Date };
   discountAmount?: number;
   loading: boolean;
+  disabled: boolean;
   onReserveClick: (totalPrice: number) => void;
 }
 
@@ -14,6 +15,7 @@ function CheckoutButtonZone({
   selectedDates,
   discountAmount = 0,
   loading,
+  disabled,
   onReserveClick,
 }: CheckoutButtonZoneProps) {
   const insurancePrice = Number(import.meta.env.VITE_INSURANCE) || 180;
@@ -52,7 +54,7 @@ function CheckoutButtonZone({
 
       <Button
         onClick={() => onReserveClick(totalPrice)}
-        disabled={loading}
+        disabled={loading || disabled}
         variant="contained"
         sx={{
           backgroundColor: "#5B27EC",
