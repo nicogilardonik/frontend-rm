@@ -13,7 +13,7 @@ const CheckoutProductInfo: React.FC<CheckoutProductInfoProps> = ({
       <img
         src={product.mainImage}
         alt={product.propertyName}
-        className="w-14 h-14 rounded-lg object-cover border border-gray-300"
+        className="w-14 h-14 rounded-lg object-cover "
       />
       <div className="ml-4">
         <h3 className="text-lg font-semibold text-gray-900">
