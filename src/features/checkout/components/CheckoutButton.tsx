@@ -1,6 +1,3 @@
-import Button from "@mui/material/Button";
-import CircularProgress from "@mui/material/CircularProgress";
-
 interface CheckoutButtonZoneProps {
   pricePerDay: number;
   selectedDates: { from?: Date; to?: Date };
