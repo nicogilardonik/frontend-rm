@@ -52,28 +52,42 @@ function CheckoutButtonZone({
         </p>
       </div>
 
-      <Button
+      <button
         onClick={() => onReserveClick(totalPrice)}
         disabled={loading || disabled}
-        variant="contained"
-        sx={{
-          backgroundColor: "#5B27EC",
-          "&:hover": { backgroundColor: "#622AFF" },
-          color: "white",
-          padding: "12px 24px",
-          borderRadius: "25px",
-          fontWeight: "bold",
-          textTransform: "none",
-          width: "100%",
-          maxWidth: "320px",
-          boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-        }}
-        startIcon={
-          loading ? <CircularProgress size={20} color="inherit" /> : null
-        }
+        className={`w-full max-w-[320px] py-3 px-6 rounded-full font-semibold text-white shadow-md transition
+        ${
+          disabled || loading
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-primary hover:bg-primary-dark active:scale-95"
+        }`}
       >
-        {loading ? "Procesando..." : "Reservar"}
-      </Button>
+        {loading ? (
+          <div className="flex items-center justify-center">
+            <svg
+              className="animate-spin h-5 w-5 mr-3 text-white"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v8H4z"
+              ></path>
+            </svg>
+            Procesando...
+          </div>
+        ) : (
+          "Reservar"
+        )}
+      </button>
     </div>
   );
 }
